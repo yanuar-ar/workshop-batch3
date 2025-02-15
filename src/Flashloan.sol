@@ -38,7 +38,7 @@ contract Flashloan {
   address public lendingPool = 0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2;
 
   // balancer
-  address public balancerVault = 0xBA12222222228d8Ba445958a75a0704d566BF2C8;p
+  address public balancerVault = 0xBA12222222228d8Ba445958a75a0704d566BF2C8;
   address public weth = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
 
   address public usdc = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;

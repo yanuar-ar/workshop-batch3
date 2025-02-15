@@ -18,6 +18,10 @@ contract VaultTest is Test {
   function setUp() public {
     // deploy token
     tokenRupiah = new TokenRupiah();
+
+    tokenRupiah.mint(address(this), 1000);
+    address vaultAddress = computeCreateAddress(address(this), vm.getNonce(address(this)));
+    tokenRupiah.approve(vaultAddress, 1000);
     vault = new Vault(address(tokenRupiah));
 
     tokenRupiah.mint(alice, 1_000_000e6);
@@ -92,6 +96,33 @@ contract VaultTest is Test {
     vm.startPrank(carol);
     uint256 carolShares = vault.balanceOf(carol);
     vault.withdraw(carolShares);
+    vm.stopPrank();
+
+  }
+
+
+  function test_inflation_attack() public {
+    // alice adalah hacker
+    vm.startPrank(alice);
+    tokenRupiah.approve(address(vault), 1);
+    vault.deposit(1);
+    tokenRupiah.transfer(address(vault), 1000e6);
+    vm.stopPrank();
+
+    // bob deposit 100 USDC
+    vm.startPrank(bob);
+    tokenRupiah.approve(address(vault), 100e6);
+    vault.deposit(100e6);
+    console.log("bob shares", vault.balanceOf(bob));
+    vm.stopPrank();
+
+    // alice withdraw
+    vm.startPrank(alice);
+    uint256 aliceBalanceBefore = tokenRupiah.balanceOf(alice);
+    uint256 aliceShares = vault.balanceOf(alice);
+    vault.withdraw(aliceShares);
+    uint256 aliceBalanceAfter = tokenRupiah.balanceOf(alice);
+    console.log("alice balance after", aliceBalanceAfter-aliceBalanceBefore);
     vm.stopPrank();
 
   }

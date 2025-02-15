@@ -18,6 +18,10 @@ contract Vault is ERC20 {
   constructor(address _assetToken) ERC20("Deposito Vault","DEPO") {
     assetToken = _assetToken;
     owner = msg.sender;
+
+    // prevent inflation attack
+    IERC20(assetToken).transferFrom(msg.sender,address(this),1000);
+    _mint(address(this),1000);
   }
 
   function deposit(uint256 amount) external {
